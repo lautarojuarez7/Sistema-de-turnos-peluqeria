@@ -38,4 +38,13 @@ public Servicio getServicio(){
 public double getPrecio(){
     return precio;
 }
+public void setFechaHora(LocalDateTime fechaHora) {
+    this.fechaHora = fechaHora;
+}
+public void setEstado(Estado estado){
+    this.estado = estado;
+}
+public void mostrarEstado(){
+    System.out.println("Turno de " + cliente.getNombre() + " con " + peluquero.getNombre() + " - Estado: " + estado);
+}
 }
