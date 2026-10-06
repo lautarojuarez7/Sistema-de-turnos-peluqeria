@@ -9,8 +9,20 @@ import java.util.ArrayList;
 public class Peluqueria
 {
     private ArrayList<Cliente> listaClientes;
+    private ArrayList<Peluquero> listaPeluqueros;
+    private ArrayList<Turno> listaTurnos;
     
     public Peluqueria(){
         listaClientes = new ArrayList<>();
+        listapeluqueros = new ArrayList<>();
+        listaTurnos = new ArrayList<>();
+    }
+    
+    public void registrarPeluquero(Peluquero peluquero){
+        listaPeluqueros.add(peluquero);
+    }
+    
+    public void registrarTurno(Turno turno){
+        listaTurnos.add(turno);    
     }
 }
