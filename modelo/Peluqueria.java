@@ -1,3 +1,4 @@
+package modelo;
 import java.util.ArrayList;
 
 /**
@@ -14,7 +15,7 @@ public class Peluqueria
     
     public Peluqueria(){
         listaClientes = new ArrayList<>();
-        listapeluqueros = new ArrayList<>();
+        listaPeluqueros = new ArrayList<>();
         listaTurnos = new ArrayList<>();
     }
     

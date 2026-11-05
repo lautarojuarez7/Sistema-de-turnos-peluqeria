@@ -1,3 +1,4 @@
+package modelo;
 public class ServicioPeluquero
 {
     private String nombre;

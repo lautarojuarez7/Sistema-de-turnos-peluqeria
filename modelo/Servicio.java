@@ -1,3 +1,4 @@
+package modelo;
 
 /**
  * Write a description of class Servicio here.
