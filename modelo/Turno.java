@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter;
 
 public class Turno {
 
-    // Atributos
+  
     private LocalDate fecha;
     private LocalTime hora;
     private String peluquero;
@@ -15,7 +15,6 @@ public class Turno {
     private Servicio servicio;
     private double precio;
 
-    // Constructor
     public Turno(LocalDate fecha, LocalTime hora, String peluquero,
                  Estado estado, Cliente cliente, Servicio servicio, double precio) {
         this.fecha = fecha;
@@ -27,7 +26,7 @@ public class Turno {
         this.precio = precio;
     }
 
-    // Getters
+
     public LocalDate getFecha() { return fecha; }
     public LocalTime getHora() { return hora; }
     public String getPeluquero() { return peluquero; }
@@ -36,7 +35,7 @@ public class Turno {
     public Servicio getServicio() { return servicio; }
     public double getPrecio() { return precio; }
 
-    // Setters
+
     public void setFecha(LocalDate fecha) { this.fecha = fecha; }
     public void setHora(LocalTime hora) { this.hora = hora; }
     public void setPeluquero(String peluquero) { this.peluquero = peluquero; }
@@ -45,12 +44,12 @@ public class Turno {
     public void setServicio(Servicio servicio) { this.servicio = servicio; }
     public void setPrecio(double precio) { this.precio = precio; }
 
-    /** Devuelve el total a pagar por el turno. */
+   
     public double calcularTotal() {
         return precio;
     }
 
-    /** Muestra por pantalla los datos del turno y su estado. */
+   
     public void mostrarEstado() {
         DateTimeFormatter fmtFecha = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         DateTimeFormatter fmtHora = DateTimeFormatter.ofPattern("HH:mm");
