@@ -24,6 +24,8 @@ public class Main
         GestorPeluqueria gestor = new GestorPeluqueria();
         vista = new VistaPeluqueria();
         controlador = new ControladorPeluqueria(gestor, vista);
+        controlador.cargarDatosGuardados();
+        controlador.cargarDatosDeEjemplo();
 
         int opcion;
         do {
@@ -125,7 +127,6 @@ public class Main
         }
     }
 
-    // ver turnos del cliente y cancelarlo
     private static void verTurnosDeCliente(){
     vista.mostrarTitulo("Turnos de un cliente");
     String dni = leerTexto("DNI del cliente: ");

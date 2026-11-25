@@ -1,9 +1,12 @@
 package controlador;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
+import modelo.Cliente;
 import modelo.Especialidad;
 import modelo.Peluquero;
 import modelo.Turno;
@@ -22,12 +25,72 @@ public class ControladorPeluqueria
     }
 
 
+    public void cargarDatosGuardados()
+    {
+        try {
+            gestor.cargarDatosGuardados();
+            vista.mostrarMensaje("Datos cargados desde la base de datos: "
+                + gestor.getClientes().size() + " clientes, "
+                + gestor.getPeluqueros().size() + " peluqueros, "
+                + gestor.getTurnos().size() + " turnos.");
+        } catch (IllegalStateException e) {
+            vista.mostrarError(e.getMessage());
+        }
+    }
+
+    public void cargarDatosDeEjemplo()
+    {
+        if (!gestor.getPeluqueros().isEmpty() || !gestor.getTurnos().isEmpty()) {
+            return;
+        }
+        try {
+            Peluquero martin = gestor.registrarPeluquero("Martín", "Gómez", "28111222", "1155550101",
+                Especialidad.PELO, LocalTime.of(9, 0), LocalTime.of(18, 0));
+            Peluquero lucia = gestor.registrarPeluquero("Lucía", "Fernández", "30222333", "1155550102",
+                Especialidad.BARBA, LocalTime.of(10, 0), LocalTime.of(19, 0));
+
+            Cliente nicolas = clienteDeEjemplo("Nicolás", "Álvarez", "40333444", "1155550201");
+            Cliente diego = clienteDeEjemplo("Diego", "Romero", "41222333", "1155550202");
+
+            LocalDate dia1 = proximoDiaHabil(LocalDate.now().plusDays(1));
+            LocalDate dia2 = proximoDiaHabil(dia1.plusDays(1));
+
+            gestor.solicitarTurno(nicolas, martin, dia1, LocalTime.of(10, 0), "Corte", 8000);
+            gestor.solicitarTurno(diego, lucia, dia1, LocalTime.of(11, 30), "Barba", 6000);
+            gestor.solicitarTurno(diego, martin, dia2, LocalTime.of(15, 0), "Corte", 8000);
+
+            DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            vista.mostrarMensaje("Datos de ejemplo cargados: 2 peluqueros y 3 turnos ("
+                + dia1.format(formato) + " y " + dia2.format(formato) + ").");
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            vista.mostrarError("No se pudieron cargar los datos de ejemplo: " + e.getMessage());
+        }
+    }
+
+    private Cliente clienteDeEjemplo(String nombre, String apellido, String dni, String telefono)
+    {
+        Cliente existente = gestor.buscarCliente(dni);
+        if (existente != null) {
+            return existente;
+        }
+        return gestor.registrarCliente(nombre, apellido, dni, telefono);
+    }
+
+    private LocalDate proximoDiaHabil(LocalDate desde)
+    {
+        LocalDate fecha = desde;
+        while (fecha.getDayOfWeek() == DayOfWeek.SUNDAY) {
+            fecha = fecha.plusDays(1);
+        }
+        return fecha;
+    }
+
     public void registrarCliente(String nombre, String apellido, String dni, String telefono)
     {
         try {
             gestor.registrarCliente(nombre, apellido, dni, telefono);
             vista.mostrarMensaje("Cliente registrado correctamente.");
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | IllegalStateException e) {
             vista.mostrarError(e.getMessage());
         }
     }
@@ -38,7 +101,7 @@ public class ControladorPeluqueria
         try {
             gestor.registrarPeluquero(nombre, apellido, dni, telefono, especialidad, horaInicio, horaFin);
             vista.mostrarMensaje("Peluquero registrado correctamente.");
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | IllegalStateException e) {
             vista.mostrarError(e.getMessage());
         }
     }
@@ -80,7 +143,7 @@ public class ControladorPeluqueria
             fecha, hora, servicio, precio);
             vista.mostrarMensaje("Turno registrado correctamente:");
             vista.mostrarTurno(turno);
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | IllegalStateException e) {
             vista.mostrarError(e.getMessage());
         }
     }
@@ -106,7 +169,7 @@ public class ControladorPeluqueria
         try {
             gestor.cancelarTurno(turnoActivo(dniCliente, numero));
             vista.mostrarMensaje("Turno cancelado. El horario quedó libre.");
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | IllegalStateException e) {
             vista.mostrarError(e.getMessage());
         }
     }
@@ -116,7 +179,7 @@ public class ControladorPeluqueria
         try {
             gestor.marcarRealizado(turnoActivo(dniCliente, numero));
             vista.mostrarMensaje("Turno marcado como realizado.");
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | IllegalStateException e) {
             vista.mostrarError(e.getMessage());
         }
     }

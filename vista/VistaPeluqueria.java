@@ -83,7 +83,6 @@ public class VistaPeluqueria
         System.out.println(describirTurno(turno));
     }
 
-    /** Lista de turnos con viñeta (para consultas). */
     public void mostrarTurnos(ArrayList<Turno> turnos)
     {
         for (Turno t : turnos) {
@@ -91,15 +90,12 @@ public class VistaPeluqueria
         }
     }
 
-    /** Lista de turnos numerados desde 1 (para elegir uno). */
     public void mostrarTurnosNumerados(ArrayList<Turno> turnos)
     {
         for (int i = 0; i < turnos.size(); i++) {
             System.out.println((i + 1) + ". " + describirTurno(turnos.get(i)));
         }
     }
-
-    // ---------- Personas ----------
 
     public void mostrarPeluqueros(ArrayList<Peluquero> peluqueros)
     {

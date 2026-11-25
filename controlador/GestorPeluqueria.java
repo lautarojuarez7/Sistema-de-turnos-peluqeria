@@ -16,6 +16,9 @@ import modelo.Peluquero;
 import modelo.Persona;
 import modelo.Servicio;
 import modelo.Turno;
+import persistencia.ClienteDAO;
+import persistencia.PeluqueroDAO;
+import persistencia.TurnoDAO;
 
 
 public class GestorPeluqueria
@@ -27,10 +30,41 @@ public class GestorPeluqueria
 
     private HashMap<String, Calendario> calendarios;
 
+    private ClienteDAO clienteDAO;
+    private PeluqueroDAO peluqueroDAO;
+    private TurnoDAO turnoDAO;
+
     public GestorPeluqueria()
     {
         peluqueria = new Peluqueria();
         calendarios = new HashMap<>();
+        clienteDAO = new ClienteDAO();
+        peluqueroDAO = new PeluqueroDAO();
+        turnoDAO = new TurnoDAO();
+    }
+
+    public void cargarDatosGuardados()
+    {
+        ArrayList<Cliente> clientes = clienteDAO.listar();
+        ArrayList<Peluquero> peluqueros = peluqueroDAO.listar();
+        ArrayList<Turno> turnos = turnoDAO.listar(clientes, peluqueros);
+
+        for (Cliente c : clientes) {
+            peluqueria.registrarCliente(c);
+        }
+        for (Peluquero p : peluqueros) {
+            peluqueria.registrarPeluquero(p);
+            calendarios.put(nombreCompleto(p), new Calendario(p.getHoraInicio(), p.getHoraFin()));
+        }
+        for (Turno t : turnos) {
+            peluqueria.registrarTurno(t);
+            if (!t.getEstado().esCancelado()) {
+                Calendario calendario = calendarios.get(t.getPeluquero());
+                if (calendario != null) {
+                    calendario.reservarHorario(LocalDateTime.of(t.getFecha(), t.getHora()));
+                }
+            }
+        }
     }
 
   
@@ -42,6 +76,7 @@ public class GestorPeluqueria
             throw new IllegalArgumentException("Ya existe un cliente con el DNI " + dni.trim());
         }
         Cliente cliente = new Cliente(nombre.trim(), apellido.trim(), dni.trim(), telefono.trim());
+        clienteDAO.insertar(cliente);
         peluqueria.registrarCliente(cliente);
         return cliente;
     }
@@ -70,16 +105,12 @@ public class GestorPeluqueria
             throw new IllegalArgumentException("Ya hay un peluquero que se llama " + clave);
         }
 
+        peluqueroDAO.insertar(peluquero);
         peluqueria.registrarPeluquero(peluquero);
         calendarios.put(clave, new Calendario(horaInicio, horaFin));
         return peluquero;
     }
 
-    // =====================================================================
-    //  BÚSQUEDAS
-    // =====================================================================
-
-    /** Devuelve el cliente con ese DNI, o null si no existe. */
     public Cliente buscarCliente(String dni)
     {
         if (dni == null) {
@@ -94,7 +125,6 @@ public class GestorPeluqueria
         return null;
     }
 
-    /** Devuelve el peluquero con ese DNI, o null si no existe. */
     public Peluquero buscarPeluquero(String dni)
     {
         if (dni == null) {
@@ -136,7 +166,7 @@ public class GestorPeluqueria
             }
             LocalTime siguiente = hora.plusMinutes(DURACION_TURNO_MINUTOS);
             if (siguiente.isBefore(hora)) {
-                break; // pasó la medianoche, no seguimos
+                break;
             }
             hora = siguiente;
         }
@@ -177,6 +207,12 @@ public class GestorPeluqueria
 
         Turno turno = new Turno(fecha, hora, nombreCompleto(peluquero), Estado.CONFIRMADO,
         cliente, new Servicio(nombreServicio.trim()), precio);
+        try {
+            turnoDAO.insertar(turno, peluquero.getDni());
+        } catch (IllegalStateException e) {
+            calendario.liberarHorario(LocalDateTime.of(fecha, hora));
+            throw e;
+        }
         peluqueria.registrarTurno(turno);
         return turno;
     }
@@ -190,6 +226,7 @@ public class GestorPeluqueria
             throw new IllegalArgumentException("Solo se puede cancelar un turno pendiente o confirmado (este está "
                 + turno.getEstado() + ")");
         }
+        turnoDAO.actualizarEstado(turno, dniDePeluquero(turno.getPeluquero()), Estado.CANCELADO);
         turno.setEstado(Estado.CANCELADO);
 
         Calendario calendario = calendarios.get(turno.getPeluquero());
@@ -208,6 +245,7 @@ public class GestorPeluqueria
             throw new IllegalArgumentException("Solo se puede realizar un turno pendiente o confirmado (este está "
                 + turno.getEstado() + ")");
         }
+        turnoDAO.actualizarEstado(turno, dniDePeluquero(turno.getPeluquero()), Estado.REALIZADO);
         turno.setEstado(Estado.REALIZADO);
     }
 
@@ -217,7 +255,6 @@ public class GestorPeluqueria
         return peluqueria.getListaTurnos();
     }
 
-    /** Todos los turnos de un cliente (cualquier estado). */
     public ArrayList<Turno> getTurnosDeCliente(String dni)
     {
         ArrayList<Turno> resultado = new ArrayList<>();
@@ -259,6 +296,16 @@ public class GestorPeluqueria
     private String nombreCompleto(Persona persona)
     {
         return persona.getNombre() + " " + persona.getApellido();
+    }
+
+    private String dniDePeluquero(String nombre)
+    {
+        for (Peluquero p : peluqueria.getListaPeluqueros()) {
+            if (nombreCompleto(p).equals(nombre)) {
+                return p.getDni();
+            }
+        }
+        throw new IllegalStateException("No se encontró al peluquero del turno");
     }
 
     private Calendario calendarioDe(Peluquero peluquero)

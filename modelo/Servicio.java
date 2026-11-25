@@ -1,11 +1,5 @@
 package modelo;
 
-/**
- * Write a description of class Servicio here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
- */
 public class Servicio
 {
     private String nombre;
