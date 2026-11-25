@@ -175,25 +175,11 @@ public class GestorPeluqueria
             throw new IllegalArgumentException("No se pudo reservar el horario");
         }
 
-        Turno turno = new Turno(fecha, hora, nombreCompleto(peluquero), Estado.PENDIENTE,
-                                cliente, new Servicio(nombreServicio.trim()), precio);
+        Turno turno = new Turno(fecha, hora, nombreCompleto(peluquero), Estado.CONFIRMADO,
+        cliente, new Servicio(nombreServicio.trim()), precio);
         peluqueria.registrarTurno(turno);
         return turno;
     }
-
-  
-    public void confirmarTurno(Turno turno)
-    {
-        if (turno == null) {
-            throw new IllegalArgumentException("No se indicó ningún turno");
-        }
-        if (turno.getEstado() != Estado.PENDIENTE) {
-            throw new IllegalArgumentException("Solo se puede confirmar un turno pendiente (este está "
-                + turno.getEstado() + ")");
-        }
-        turno.setEstado(Estado.CONFIRMADO);
-    }
-
 
     public void cancelarTurno(Turno turno)
     {
