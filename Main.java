@@ -126,12 +126,17 @@ public class Main
     }
 
     // ver turnos del cliente y cancelarlo
-    private static void verTurnosDeCliente()
-    {
-        vista.mostrarTitulo("Turnos de un cliente");
-        String dni = leerTexto("DNI del cliente: ");
+    private static void verTurnosDeCliente(){
+    vista.mostrarTitulo("Turnos de un cliente");
+    String dni = leerTexto("DNI del cliente: ");
 
-        controlador.mostrarTurnosDeCliente(dni);
+    int cantidad = controlador.mostrarTurnosActivos(dni);
+    if (cantidad > 0) {
+    int numero = leerEntero("Número de turno a cancelar (0 para volver): ");
+        if (numero != 0) {
+        controlador.cancelarTurno(dni, numero);
+        }
+    }
     }
 
     private static void verTurnosDelDia()
