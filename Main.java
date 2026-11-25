@@ -35,12 +35,10 @@ public class Main
                 case 2:  registrarPeluquero();     break;
                 case 3:  verHorariosLibres();      break;
                 case 4:  solicitarTurno();         break;
-                case 5:  confirmarTurno();         break;
-                case 6:  cancelarTurno();          break;
-                case 7:  marcarTurnoRealizado();   break;
-                case 8:  verTurnosDeCliente();     break;
-                case 9:  verTurnosDelDia();        break;
-                case 10: controlador.mostrarPeluquerosYClientes(); break;
+                case 5:  marcarTurnoRealizado();   break;
+                case 6:  verTurnosDeCliente();     break;
+                case 7:  verTurnosDelDia();        break;
+                case 8: controlador.mostrarPeluquerosYClientes(); break;
                 case 0:                            break;
                 default: vista.mostrarMensaje("Opción inválida.");
             }
@@ -113,31 +111,6 @@ public class Main
         controlador.solicitarTurno(dniCliente, dniPeluquero, fecha, hora, servicio, precio);
     }
 
-    private static void confirmarTurno()
-    {
-        vista.mostrarTitulo("Confirmar turno");
-        String dni = leerTexto("DNI del cliente: ");
-        int cantidad = controlador.mostrarTurnosActivos(dni);
-        if (cantidad > 0) {
-            int numero = leerEntero("Número de turno (0 para volver): ");
-            if (numero != 0) {
-                controlador.confirmarTurno(dni, numero);
-            }
-        }
-    }
-
-    private static void cancelarTurno()
-    {
-        vista.mostrarTitulo("Cancelar turno");
-        String dni = leerTexto("DNI del cliente: ");
-        int cantidad = controlador.mostrarTurnosActivos(dni);
-        if (cantidad > 0) {
-            int numero = leerEntero("Número de turno (0 para volver): ");
-            if (numero != 0) {
-                controlador.cancelarTurno(dni, numero);
-            }
-        }
-    }
 
     private static void marcarTurnoRealizado()
     {
@@ -152,6 +125,7 @@ public class Main
         }
     }
 
+    // ver turnos del cliente y cancelarlo
     private static void verTurnosDeCliente()
     {
         vista.mostrarTitulo("Turnos de un cliente");

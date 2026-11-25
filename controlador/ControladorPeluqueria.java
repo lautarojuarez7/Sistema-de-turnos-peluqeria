@@ -33,7 +33,7 @@ public class ControladorPeluqueria
     }
 
     public void registrarPeluquero(String nombre, String apellido, String dni, String telefono,
-                                   Especialidad especialidad, LocalTime horaInicio, LocalTime horaFin)
+    Especialidad especialidad, LocalTime horaInicio, LocalTime horaFin)
     {
         try {
             gestor.registrarPeluquero(nombre, apellido, dni, telefono, especialidad, horaInicio, horaFin);
@@ -72,13 +72,13 @@ public class ControladorPeluqueria
 
 
     public void solicitarTurno(String dniCliente, String dniPeluquero, LocalDate fecha,
-                               LocalTime hora, String servicio, double precio)
+    LocalTime hora, String servicio, double precio)
     {
         try {
             Turno turno = gestor.solicitarTurno(gestor.buscarCliente(dniCliente),
-                                                gestor.buscarPeluquero(dniPeluquero),
-                                                fecha, hora, servicio, precio);
-            vista.mostrarMensaje("Turno solicitado. Queda PENDIENTE hasta que se confirme:");
+            gestor.buscarPeluquero(dniPeluquero),
+            fecha, hora, servicio, precio);
+            vista.mostrarMensaje("Turno registrado correctamente:");
             vista.mostrarTurno(turno);
         } catch (IllegalArgumentException e) {
             vista.mostrarError(e.getMessage());
@@ -99,17 +99,6 @@ public class ControladorPeluqueria
         }
         vista.mostrarTurnosNumerados(turnos);
         return turnos.size();
-    }
-
-   
-    public void confirmarTurno(String dniCliente, int numero)
-    {
-        try {
-            gestor.confirmarTurno(turnoActivo(dniCliente, numero));
-            vista.mostrarMensaje("Turno confirmado.");
-        } catch (IllegalArgumentException e) {
-            vista.mostrarError(e.getMessage());
-        }
     }
 
     public void cancelarTurno(String dniCliente, int numero)

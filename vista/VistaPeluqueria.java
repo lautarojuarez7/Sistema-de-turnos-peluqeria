@@ -32,12 +32,10 @@ public class VistaPeluqueria
         System.out.println("2. Registrar peluquero");
         System.out.println("3. Ver horarios libres");
         System.out.println("4. Solicitar turno");
-        System.out.println("5. Confirmar turno");
-        System.out.println("6. Cancelar turno");
-        System.out.println("7. Marcar turno como realizado");
-        System.out.println("8. Ver turnos de un cliente");
-        System.out.println("9. Ver turnos de un día");
-        System.out.println("10. Ver peluqueros y clientes");
+        System.out.println("5. Marcar turno como realizado");
+        System.out.println("6. Ver turnos de un cliente (y cancelarlos)");
+        System.out.println("7. Ver turnos de un día");
+        System.out.println("8. Ver peluqueros y clientes");
         System.out.println("0. Salir");
     }
 
